@@ -18,13 +18,19 @@ const typeDefs = `
         category: PhotoCategory!
     }
 
+    input PostPhotoInput{
+        name: String!
+        category: PhotoCategory=PORTRAIT
+        description: String
+    }
+
     type Query {
         totalPhotos: Int!
         allPhotos: [Photo!]!
     }
 
     type Mutation {
-        postPhoto(name: String! description: String): Photo!
+        postPhoto(input: PostPhotoInput): Photo!
     }
 `
 
@@ -56,7 +62,6 @@ const resolvers = {
 }
 
 // def server
-
 const server = new ApolloServer({
     typeDefs,
     resolvers
