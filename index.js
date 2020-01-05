@@ -2,11 +2,20 @@
 const {ApolloServer } = require(`apollo-server`)
 
 const typeDefs = `
+    enum PhotoCategory {
+        SELFIE
+        PORTRAIT
+        ACTION
+        LANDSCAPE
+        GRAPHIC
+    }
+
     type Photo {
         id: ID!
         url: String!
         name: String!
         description: String
+        category: PhotoCategory!
     }
 
     type Query {
