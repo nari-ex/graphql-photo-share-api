@@ -30,7 +30,7 @@ const typeDefs = `
     }
 
     type Mutation {
-        postPhoto(input: PostPhotoInput): Photo!
+        postPhoto(input: PostPhotoInput!): Photo!
     }
 `
 
@@ -49,10 +49,9 @@ const resolvers = {
         postPhoto(parent, args) {
             var newPhoto = {
                 id: _id++,
-                ...args
+                ...args.input
             }
             photos.push(newPhoto)
-
             return newPhoto
         }
     },
