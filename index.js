@@ -11,11 +11,20 @@ const typeDefs = `
     }
 `
 
+var photos = []
+
 // def resolver
 
 const resolvers = {
     Query: {
         totalPhotos: () => 42
+    },
+
+    Mutation: {
+        postPhoto(parent, args) {
+            photos.push(args)
+            return true
+        }
     }
 }
 
