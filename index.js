@@ -19,19 +19,26 @@ const typeDefs = `
     }
 `
 
+var _id = 0
 var photos = []
 
 // def resolver
 
 const resolvers = {
     Query: {
-        totalPhotos: () => 42
+        totalPhotos: () => photos.length,
+        allPhotos: () => photos
     },
 
     Mutation: {
         postPhoto(parent, args) {
-            photos.push(args)
-            return true
+            var newPhoto = {
+                id: _id++,
+                ...args
+            }
+            photos.push(newPhoto)
+
+            return newPhoto
         }
     }
 }
