@@ -16,6 +16,14 @@ const typeDefs = `
         name: String!
         description: String
         category: PhotoCategory!
+        postedBy: User!
+    }
+
+    User {
+        githubLogin: ID!
+        name: String
+        avarar: String
+        postedPhotos: [Photo!]!
     }
 
     input PostPhotoInput{
