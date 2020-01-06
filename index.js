@@ -1,5 +1,5 @@
 // loading apollo-server module
-const {ApolloServer } = require(`apollo-server`)
+const { ApolloServer } = require(`apollo-server`)
 
 const typeDefs = `
     enum PhotoCategory {
@@ -19,7 +19,7 @@ const typeDefs = `
         postedBy: User!
     }
 
-    User {
+    type User {
         githubLogin: ID!
         name: String
         avarar: String
@@ -64,7 +64,15 @@ const resolvers = {
         }
     },
     Photo: {
-        url: parent => `http://example.com/img/${parent.id}.jpg`
+        url: parent => `http://example.com/img/${parent.id}.jpg`,
+        postedBy: parent => {
+            return users.find(u => u.githubLogin === parent.githubUser)
+        }
+    },
+    User: {
+        postedPhotos: parent => {
+        return photos.filter(p => p.githubUser === parent.githubLogin)
+        }
     }
 }
 
@@ -77,4 +85,4 @@ const server = new ApolloServer({
 // start
 server
     .listen()
-    .then(({url}) => console.log(`GraphQL Serveice running on ${url}`))
+    .then(({ url }) => console.log(`GraphQL Serveice running on ${url}`))
