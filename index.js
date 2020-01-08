@@ -2,6 +2,8 @@
 const { ApolloServer } = require(`apollo-server`)
 
 const typeDefs = `
+    scalar DateTime
+
     enum PhotoCategory {
         SELFIE
         PORTRAIT
@@ -18,6 +20,7 @@ const typeDefs = `
         category: PhotoCategory!
         postedBy: User!
         taggedUsers: [Photo!]!
+        created: DateTime!
        }
 
     type User {
@@ -36,7 +39,7 @@ const typeDefs = `
 
     type Query {
         totalPhotos: Int!
-        allPhotos: [Photo!]!
+        allPhotos(after: DateTime): [Photo!]!
     }
 
     type Mutation {
@@ -47,6 +50,12 @@ const typeDefs = `
 var _id = 0
 var photos = []
 
+const serialize = value => new Date(value).toISOString()
+
+const parseValue = value => new Date(value)
+
+const parseLiteral = ast => ast.value
+
 // def resolver
 
 const resolvers = {
@@ -54,7 +63,6 @@ const resolvers = {
         totalPhotos: () => photos.length,
         allPhotos: () => photos
     },
-
     Mutation: {
         postPhoto(parent, args) {
             var newPhoto = {
@@ -62,28 +70,28 @@ const resolvers = {
                 ...args.input
             }
             photos.push(newPhoto)
-            return newPhoto
+return newPhoto
         }
     },
-    Photo: {
-        url: parent => `http://example.com/img/${parent.id}.jpg`,
+Photo: {
+    url: parent => `http://example.com/img/${parent.id}.jpg`,
         postedBy: parent => {
             return users.find(u => u.githubLogin === parent.githubUser)
         },
-        taggedUsers: parent => tags
-        .filter(tag => tag.photoID === parent.id)
-        .map(tag => tag.userID)
-        .map(userID => users.find(u => u.githubLogin === userID))
+            taggedUsers: parent => tags
+                .filter(tag => tag.photoID === parent.id)
+                .map(tag => tag.userID)
+                .map(userID => users.find(u => u.githubLogin === userID))
+},
+User: {
+    postedPhotos: parent => {
+        return photos.filter(p => p.githubUser === parent.githubLogin)
     },
-    User: {
-        postedPhotos: parent => {
-            return photos.filter(p => p.githubUser === parent.githubLogin)
-        },
         inPhotos: parent => tags
-        .filter(tag => tag.userID === parent.id)
-        .map(tag => tag.photoID)
-        .map(photoID => photos.find(p => p.id === photoID))
-    }
+            .filter(tag => tag.userID === parent.id)
+            .map(tag => tag.photoID)
+            .map(photoID => photos.find(p => p.id === photoID))
+}
 }
 
 // def server
