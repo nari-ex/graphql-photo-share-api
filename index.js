@@ -17,13 +17,15 @@ const typeDefs = `
         description: String
         category: PhotoCategory!
         postedBy: User!
-    }
+        inPhotos: [User!]!
+       }
 
     type User {
         githubLogin: ID!
         name: String
         avarar: String
         postedPhotos: [Photo!]!
+        taggedUsers: [Photo!]!
     }
 
     input PostPhotoInput{
