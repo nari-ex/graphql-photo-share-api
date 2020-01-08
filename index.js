@@ -1,5 +1,6 @@
 // loading apollo-server module
 const { ApolloServer } = require(`apollo-server`)
+const { GraphQLScalarType } = require(`graphql`)
 
 const typeDefs = `
     scalar DateTime
@@ -91,7 +92,14 @@ const resolvers = {
             .filter(tag => tag.userID === parent.id)
             .map(tag => tag.photoID)
             .map(photoID => photos.find(p => p.id === photoID))
-    }
+    },
+    DateTime: new GraphQLScalarType({
+        name: `DateTime`,
+        description: `A valid date time value.`,
+        parseValue: value => new Date(value),
+        serialize: value => new Date(value).toISOString(),
+        parseLiteral: ast => ast.value
+    })
 }
 
 // def server
