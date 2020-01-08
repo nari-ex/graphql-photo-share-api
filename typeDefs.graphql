@@ -1,0 +1,43 @@
+scalar DateTime
+
+enum PhotoCategory {
+  SELFIE
+  PORTRAIT
+  ACTION
+  LANDSCAPE
+  GRAPHIC
+}
+
+type Photo {
+  id: ID!
+  url: String!
+  name: String!
+  description: String
+  category: PhotoCategory!
+  postedBy: User!
+  taggedUsers: [Photo!]!
+  created: DateTime!
+}
+
+type User {
+  githubLogin: ID!
+  name: String
+  avarar: String
+  postedPhotos: [Photo!]!
+  inPhotos: [User!]!
+}
+
+input PostPhotoInput {
+  name: String!
+  category: PhotoCategory = PORTRAIT
+  description: String
+}
+
+type Query {
+  totalPhotos: Int!
+  allPhotos(after: DateTime): [Photo!]!
+}
+
+type Mutation {
+  postPhoto(input: PostPhotoInput!): Photo!
+}
