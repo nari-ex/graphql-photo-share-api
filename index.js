@@ -1,6 +1,9 @@
 // loading apollo-server module
-const { ApolloServer } = require(`apollo-server`)
+const { ApolloServer } = require(`apollo-server-express`)
+const express = require(`express`)
 const { GraphQLScalarType } = require(`graphql`)
+
+
 
 const typeDefs = `
     scalar DateTime
@@ -104,17 +107,18 @@ const resolvers = {
 }
 
 // def server
-const server = new ApolloServer({
-    typeDefs,
-    resolvers
-})
+var app = express()
+const server = new ApolloServer({ typeDefs, resolvers })
 
-// start
-server
-    .listen()
-    .then(({ url }) => console.log(`GraphQL Serveice running on ${url}`))
+server.applyMiddleware({ app })
+app.get(`/`, (req, res) => res.end(`Welcome to the PhotoShare API`))
+
+app.listen({ port: 4000 }, () =>
+    console.log(`GraphQL Server running @ http://localhost:4000${server.graphqlPath}`)
+)
 
 
+// sample data
 var users = [
     { "githubLogin": "mHattrup", "name": "Mike Hattrup" },
     { "githubLogin": "gPlake", "name": "Glen Plake" },
